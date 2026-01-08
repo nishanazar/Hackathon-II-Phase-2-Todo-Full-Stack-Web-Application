@@ -29,7 +29,7 @@ const DashboardPage = () => {
 
     // Set up event listener to reload tasks when localStorage changes
     // (for cross-tab synchronization)
-    const handleStorageChange = (e) => {
+    const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'tasks' || e.key === 'auth-token') {
         loadTasks();
       }

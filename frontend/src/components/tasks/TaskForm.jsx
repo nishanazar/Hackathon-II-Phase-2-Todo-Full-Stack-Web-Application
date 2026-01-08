@@ -7,6 +7,10 @@ const TaskForm = ({ onSubmit, onCancel, initialData = null }) => {
   });
   const [errors, setErrors] = useState({});
 
+  /**
+   * Handle input changes
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} e - The change event
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -23,6 +27,10 @@ const TaskForm = ({ onSubmit, onCancel, initialData = null }) => {
     }
   };
 
+  /**
+   * Handle form submission
+   * @param {React.FormEvent<HTMLFormElement>} e - The form event
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
 

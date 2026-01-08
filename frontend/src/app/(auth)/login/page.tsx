@@ -31,7 +31,7 @@ const LoginPage = () => {
     checkAuth();
   }, []); // Empty dependency array to run only once on mount
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
