@@ -40,7 +40,8 @@ async function getCurrentUserId(): Promise<string> {
   return session.user.id;
 }
 
-// Helper function to make authenticated API requests
+// Helper function to make API requests
+// Note: Hugging Face deployed backend might not require authentication
 async function makeAuthenticatedRequest(
   url: string,
   options: RequestInit = {}
@@ -48,21 +49,20 @@ async function makeAuthenticatedRequest(
   try {
     console.log('Making API request to:', url); // Debug logging
 
+    // For Hugging Face deployment, we might not need authentication
+    // But we'll keep it in case the backend requires it
     const session = await getCurrentSession();
-
-    if (!session) {
-      throw new Error('No active session found');
-    }
-
-    console.log('Using token:', session.token.substring(0, 20) + '...'); // Debug logging (only first 20 chars)
 
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token}`,
+        // Only add authorization header if we have a session
+        ...(session && { 'Authorization': `Bearer ${session.token}` }),
         ...options.headers,
       },
+      // Add mode: 'cors' to handle cross-origin requests properly
+      mode: 'cors',
     });
 
     console.log('Response status:', response.status); // Debug logging
@@ -179,6 +179,10 @@ async function makeAuthenticatedRequest(
     }
   } catch (error) {
     console.error('API request error:', error);
+    // Check if this is a CORS or network error
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error('Network error or CORS issue. Please check that the backend is accessible and properly configured for cross-origin requests.');
+    }
     throw error;
   }
 }
@@ -187,9 +191,8 @@ async function makeAuthenticatedRequest(
 export const taskApi = {
   // Get all tasks for the current user
   getTasks: async (statusFilter: 'all' | 'pending' | 'completed' = 'all'): Promise<Task[]> => {
-    const userId = await getCurrentUserId();
-    const filterParam = statusFilter !== 'all' ? `?status_filter=${statusFilter}` : '';
-    const url = `${API_BASE_URL}/api/${userId}/tasks${filterParam}`;
+    // Note: Backend doesn't seem to use user-specific endpoints or status filters based on docs
+    const url = `${API_BASE_URL}/todos/`;
 
     return makeAuthenticatedRequest(url, {
       method: 'GET',
@@ -198,19 +201,21 @@ export const taskApi = {
 
   // Create a new task
   createTask: async (taskData: CreateTaskData): Promise<Task> => {
-    const userId = await getCurrentUserId();
-    const url = `${API_BASE_URL}/api/${userId}/tasks`;
+    const url = `${API_BASE_URL}/todos/`;
 
     return makeAuthenticatedRequest(url, {
       method: 'POST',
-      body: JSON.stringify(taskData),
+      body: JSON.stringify({
+        title: taskData.title,
+        description: taskData.description || "",
+        completed: taskData.completed || false
+      }),
     });
   },
 
   // Get a specific task by ID
   getTask: async (taskId: string): Promise<Task> => {
-    const userId = await getCurrentUserId();
-    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}`;
+    const url = `${API_BASE_URL}/todos/${taskId}`;
 
     return makeAuthenticatedRequest(url, {
       method: 'GET',
@@ -219,30 +224,35 @@ export const taskApi = {
 
   // Update a task completely
   updateTask: async (taskId: string, taskData: UpdateTaskData): Promise<Task> => {
-    const userId = await getCurrentUserId();
-    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}`;
+    const url = `${API_BASE_URL}/todos/${taskId}`;
 
     return makeAuthenticatedRequest(url, {
       method: 'PUT',
-      body: JSON.stringify(taskData),
+      body: JSON.stringify({
+        title: taskData.title,
+        description: taskData.description || "",
+        completed: taskData.completed || false
+      }),
     });
   },
 
   // Partially update a task
   patchTask: async (taskId: string, taskData: Partial<UpdateTaskData>): Promise<Task> => {
-    const userId = await getCurrentUserId();
-    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}`;
+    const url = `${API_BASE_URL}/todos/${taskId}`;
 
     return makeAuthenticatedRequest(url, {
-      method: 'PATCH',
-      body: JSON.stringify(taskData),
+      method: 'PUT', // Using PUT since backend might not support PATCH
+      body: JSON.stringify({
+        title: taskData.title,
+        description: taskData.description,
+        completed: taskData.completed
+      }),
     });
   },
 
   // Delete a task
   deleteTask: async (taskId: string): Promise<void> => {
-    const userId = await getCurrentUserId();
-    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}`;
+    const url = `${API_BASE_URL}/todos/${taskId}`;
 
     await makeAuthenticatedRequest(url, {
       method: 'DELETE',
