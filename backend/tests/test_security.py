@@ -1,8 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
-from backend.main import app
+from main import app
 import jwt
-from backend.settings import settings
+from settings import settings
 
 @pytest.fixture
 def user1_token():

@@ -191,8 +191,9 @@ async function makeAuthenticatedRequest(
 export const taskApi = {
   // Get all tasks for the current user
   getTasks: async (statusFilter: 'all' | 'pending' | 'completed' = 'all'): Promise<Task[]> => {
-    // Note: Backend doesn't seem to use user-specific endpoints or status filters based on docs
-    const url = `${API_BASE_URL}/todos/`;
+    // Get the current user ID to construct the proper API endpoint
+    const userId = await getCurrentUserId();
+    const url = `${API_BASE_URL}/api/${userId}/tasks/`;
 
     return makeAuthenticatedRequest(url, {
       method: 'GET',
@@ -201,7 +202,9 @@ export const taskApi = {
 
   // Create a new task
   createTask: async (taskData: CreateTaskData): Promise<Task> => {
-    const url = `${API_BASE_URL}/todos/`;
+    // Get the current user ID to construct the proper API endpoint
+    const userId = await getCurrentUserId();
+    const url = `${API_BASE_URL}/api/${userId}/tasks/`;
 
     return makeAuthenticatedRequest(url, {
       method: 'POST',
@@ -215,7 +218,9 @@ export const taskApi = {
 
   // Get a specific task by ID
   getTask: async (taskId: string): Promise<Task> => {
-    const url = `${API_BASE_URL}/todos/${taskId}/`;  // Added trailing slash
+    // Get the current user ID to construct the proper API endpoint
+    const userId = await getCurrentUserId();
+    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}/`;  // Added trailing slash
 
     return makeAuthenticatedRequest(url, {
       method: 'GET',
@@ -224,7 +229,9 @@ export const taskApi = {
 
   // Update a task completely
   updateTask: async (taskId: string, taskData: UpdateTaskData): Promise<Task> => {
-    const url = `${API_BASE_URL}/todos/${taskId}/`;  // Added trailing slash
+    // Get the current user ID to construct the proper API endpoint
+    const userId = await getCurrentUserId();
+    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}/`;  // Added trailing slash
 
     return makeAuthenticatedRequest(url, {
       method: 'PUT',
@@ -238,8 +245,9 @@ export const taskApi = {
 
   // Partially update a task
   patchTask: async (taskId: string, taskData: Partial<UpdateTaskData>): Promise<Task> => {
-    // Using the dedicated update_status endpoint for PATCH operations
-    const url = `${API_BASE_URL}/todos/${taskId}/update_status/`;  // Using dedicated endpoint with trailing slash
+    // Get the current user ID to construct the proper API endpoint
+    const userId = await getCurrentUserId();
+    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}/`;  // Using the same endpoint for PATCH
 
     return makeAuthenticatedRequest(url, {
       method: 'PATCH',
@@ -251,7 +259,9 @@ export const taskApi = {
 
   // Delete a task
   deleteTask: async (taskId: string): Promise<void> => {
-    const url = `${API_BASE_URL}/todos/${taskId}/`;  // Added trailing slash
+    // Get the current user ID to construct the proper API endpoint
+    const userId = await getCurrentUserId();
+    const url = `${API_BASE_URL}/api/${userId}/tasks/${taskId}/`;  // Added trailing slash
 
     await makeAuthenticatedRequest(url, {
       method: 'DELETE',

@@ -2,9 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from backend.routes import tasks
-from backend.db import engine
-from backend.models import Task
+from routes import tasks
+from db import engine
+from models import Task
 
 app = FastAPI(title="Todo API", version="1.0.0")
 
@@ -35,7 +35,7 @@ async def internal_error_handler(request: Request, exc):
 # Add CORS middleware to allow requests from the frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend origin
+    allow_origins=["https://hackathon-ii-phase-2-todo-full-stack-web-application-2a7i1x56c.vercel.app"],  # Frontend origin
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, PUT, DELETE, etc.)
     allow_headers=["*"],  # Allow all headers

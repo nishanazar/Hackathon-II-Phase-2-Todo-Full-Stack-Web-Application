@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
+
+# Import fix for Hugging Face deployment - ensuring correct module path
+from models import Task, TaskCreate, TaskUpdate, TaskResponse  # This is the correct import
+
 from sqlmodel import Session, select
-from backend.models import Task, TaskCreate, TaskUpdate, TaskResponse
-from backend.auth import get_current_user, verify_user_id_match
-from backend.db import get_db
-from backend.exceptions import TaskNotFoundException, UserMismatchException, ValidationErrorException
+from auth import get_current_user, verify_user_id_match
+from db import get_db
+from exceptions import TaskNotFoundException, UserMismatchException, ValidationErrorException
 from uuid import UUID
 
 router = APIRouter(

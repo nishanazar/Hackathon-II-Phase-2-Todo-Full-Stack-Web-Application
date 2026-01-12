@@ -1,9 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
-from backend.main import app
-from backend.models import Task
+from main import app
+from models import Task
 import jwt
-from backend.settings import settings
+from settings import settings
 
 @pytest.fixture
 def valid_token():

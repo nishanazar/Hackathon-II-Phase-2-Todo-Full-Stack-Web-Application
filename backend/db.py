@@ -1,7 +1,7 @@
 from sqlmodel import create_engine, Session
 from typing import Generator
 from fastapi import Depends
-from .settings import settings  # Import settings from the centralized settings module
+from settings import settings  # Import settings from the centralized settings module
 
 # Create the database engine
 engine = create_engine(

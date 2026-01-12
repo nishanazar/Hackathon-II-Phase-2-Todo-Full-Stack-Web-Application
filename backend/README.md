@@ -1,3 +1,14 @@
+---
+title: Todo Backend API
+emoji: ✅
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+sdk_version: "latest"
+app_file: main.py
+pinned: false
+---
+
 # Backend Todo API
 
 This is the backend service for the Todo application, built with FastAPI and SQLModel. It provides a secure, user-isolated task management API with JWT authentication.

@@ -4,7 +4,7 @@ import jwt
 from jwt import PyJWTError
 from pydantic import BaseModel
 from typing import Optional
-from .settings import settings
+from settings import settings
 security = HTTPBearer()
 
 class TokenData(BaseModel):

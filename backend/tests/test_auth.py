@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
-from backend.main import app
-from backend.settings import settings
+from main import app
+from settings import settings
 import jwt
 
 def test_jwt_verification_valid_token():
